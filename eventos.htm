@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Creacion de usuario</title>
+  <!-- Agregamos Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">EventMaster</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="CreacionEvento.html">Creación
+                    de Evento</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="CreacionUsuario.html">Creación
+                    de Usuario</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="RegistroAsistencia.html">Registro
+                    de Asistencia</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="visorusuario.html">Visor de
+                    Usuario</a>
+            </li>
+        </ul>
+    </div>
+  </nav>
+  
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Formulario de Registro -->
+      <div class="card">
+        <div class="card-header">
+          Creacion de usuario
+        </div>
+        <div class="card-body">
+          <!-- Formulario -->
+          <form id="registroForm">
+            <div class="form-group">
+              <label for="nombreUsuario">Nombre de Usuario</label>
+              <input type="text" class="form-control" id="nombreUsuario" required>
+            </div>
+            <div class="form-group">
+              <label for="facultad">Facultad</label>
+              <input type="text" class="form-control" id="facultad" required>
+            </div>
+            <div class="form-group">
+              <label for="sede">Sede</label>
+              <input type="text" class="form-control" id="sede" required>
+            </div>
+            <div class="form-group">
+              <label for="evento">Evento a Ingresar</label>
+              <input type="text" class="form-control" id="evento" required>
+            </div>
+            <div class="form-group">
+              <label for="fotoUsuario">Foto del Usuario</label>
+              <input type="file" class="form-control-file" id="fotoUsuario" accept="image/*">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="registrarUsuario()">Registrar</button>
+            <button type="button" class="btn btn-warning" onclick="editarUsuario()">Editar Registro</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <!-- Tabla de Usuarios Registrados -->
+      <div class="card">
+        <div class="card-header">
+          Usuarios Registrados
+          <div class="form-group mt-2">
+            <input type="text" class="form-control" id="busqueda" placeholder="Buscar usuarios">
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Facultad</th>
+                <th>Sede</th>
+                <th>Evento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaUsuarios">
+              <!-- Aquí se mostrarán los usuarios registrados -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agregamos Bootstrap JS y jQuery (necesario para Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+  // Array para almacenar los usuarios
+  let usuarios = [];
+
+  // Función para registrar un usuario
+  function registrarUsuario() {
+    const nombreUsuario = document.getElementById('nombreUsuario').value;
+    const facultad = document.getElementById('facultad').value;
+    const sede = document.getElementById('sede').value;
+    const evento = document.getElementById('evento').value;
+    const fotoInput = document.getElementById('fotoUsuario');
+    
+    // Validar que los campos no estén vacíos
+    if (nombreUsuario && facultad && sede && evento && fotoInput.files.length > 0) {
+      // Obtener la imagen seleccionada
+      const fotoUsuario = URL.createObjectURL(fotoInput.files[0]);
+
+      // Crear un objeto de usuario
+      const usuario = {
+        nombre: nombreUsuario,
+        facultad: facultad,
+        sede: sede,
+        evento: evento,
+        foto: fotoUsuario
+      };
+
+      // Agregar usuario al array
+      usuarios.push(usuario);
+
+      // Limpiar el formulario
+      document.getElementById('registroForm').reset();
+
+      // Actualizar la tabla de usuarios
+      mostrarUsuarios();
+    } else {
+      alert('Por favor, complete todos los campos obligatorios y seleccione una imagen.');
+    }
+  }
+
+  // Función para mostrar los usuarios en la tabla
+  function mostrarUsuarios() {
+    const tablaUsuarios = document.getElementById('tablaUsuarios');
+    tablaUsuarios.innerHTML = ''; // Limpiar la tabla antes de actualizar
+
+    usuarios.forEach((usuario, index) => {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${usuario.nombre}</td>
+        <td>${usuario.facultad}</td>
+        <td>${usuario.sede}</td>
+        <td>${usuario.evento}</td>
+        <td>
+          <button type="button" class="btn btn-danger btn-sm" onclick="eliminarUsuario(${index})">Eliminar</button>
+          <button type="button" class="btn btn-info btn-sm" onclick="editarUsuario(${index})">Editar</button>
+        </td>
+      `;
+      tablaUsuarios.appendChild(fila);
+    });
+  }
+
+  // Función para eliminar un usuario
+  function eliminarUsuario(index) {
+    usuarios.splice(index, 1);
+    mostrarUsuarios();
+  }
+
+  // Función para editar un usuario
+  function editarUsuario(index) {
+    const usuario = usuarios[index];
+
+    // Llenar el formulario con los datos del usuario seleccionado
+    document.getElementById('nombreUsuario').value = usuario.nombre;
+    document.getElementById('facultad').value = usuario.facultad;
+    document.getElementById('sede').value = usuario.sede;
+    document.getElementById('evento').value = usuario.evento;
+
+    // Eliminar el usuario del array
+    usuarios.splice(index, 1);
+
+    // Actualizar la tabla de usuarios
+    mostrarUsuarios();
+  }
+
+  // Función para buscar usuarios
+  document.getElementById('busqueda').addEventListener('input', function () {
+    const filtro = this.value.toLowerCase();
+    const usuariosFiltrados = usuarios.filter(usuario =>
+      usuario.nombre.toLowerCase().includes(filtro) ||
+      usuario.facultad.toLowerCase().includes(filtro) ||
+      usuario.sede.toLowerCase().includes(filtro) ||
+      usuario.evento.toLowerCase().includes(filtro)
+    );
+    mostrarUsuarios(usuariosFiltrados);
+  });
+</script>
+
+
+</body>
+</html>
